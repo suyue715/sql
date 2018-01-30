@@ -1,0 +1,119 @@
+###Which column has the most NULL values? How many cells in that column are empty?
+SELECT COUNT(*) FROM  titanic where Age is null;
+
+###Delete all rows where Embarked is empty
+DELETE FROM titanic where Embarked IS NULL;
+
+
+###Fill all empty cabins with ¯\(ツ)/¯
+update titanic set Cabin='¯\(ツ)/¯' where Cabin is NULL;
+
+
+###Create a new column called FamilyCount which will be the sum of those two columns.
+ALTER TABLE titanic ADD COLUMN FamilyCount REAL;
+UPDATE titanic set FamilyCount = SibSp+Parch;
+
+###Create a column called IsReverend: 1 if they're a preacher, 0 if they're not.
+ALTER TABLE titanic ADD COLUMN IsReverend REAL;
+UPDATE titanic set IsReverend=1 where Name like '%Rev%';
+UPDATE titanic set IsReverend=0 where IsReverend IS NULL;
+
+##Create 3 columns: Embarked_C, Embarked_Q and Embarked_S.
+## These columns will have 1's and 0's that correspond to the C, Q and S values in the Embarked column
+
+##Embarked_C
+ALTER TABLE titanic ADD COLUMN Embarked_C REAL;
+UPDATE titanic set Embarked_C=1 where Embarked like '%C%';
+UPDATE titanic set Embarked_C=0 where Embarked_C IS NULL;
+
+##Embarked_Q
+ALTER TABLE titanic ADD COLUMN Embarked_Q REAL;
+UPDATE titanic set Embarked_Q=1 where Embarked like '%Q%';
+UPDATE titanic set Embarked_Q=0 where Embarked_Q IS NULL;
+
+##Embarked_S
+ALTER TABLE titanic ADD COLUMN Embarked_S REAL;
+UPDATE titanic set Embarked_S=1 where Embarked like '%S%';
+UPDATE titanic set Embarked_S=0 where Embarked_S IS NULL;
+
+
+##Do the same thing for Sex
+#Female column
+ALTER TABLE titanic ADD COLUMN Female REAL;
+UPDATE titanic set Female=1 where Sex like '%female%';
+UPDATE titanic set Female=0 where Female IS NULL;
+
+
+#Male Column 
+ALTER TABLE titanic ADD COLUMN Male REAL;
+UPDATE titanic set Male=1 where Sex like ‘%male%’;
+UPDATE titanic set Male=0 where Female=1;
+
+##What was the survival rate overall?
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM titanic;
+
+##Which gender fared the worst? What was their survival rate?
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM titanic WHERE Sex = 'female';
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM titanic WHERE Sex = 'male';
+
+##Which gender fared the worst? What was their survivale rate? Answer this using the Sex dummy variables that you created in step 2.
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM titanic WHERE Female=1;
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM titanic WHERE Female=0;
+
+
+##What was the survival rate for each Pclass?
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM titanic WHERE Pclass=1;
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM titanic WHERE Pclass=2;
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM titanic WHERE Pclass=3;
+
+##Did any reverends survive? How many?
+SELECT * FROM  titanic where IsReverend=1;
+##1 reverend survived
+
+
+##What is the survival rate for cabins marked ¯\(ツ)/¯
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM  titanic where Cabin='¯\(ツ)/¯';
+
+
+##What is the survival rate for people whose Age is misisng?
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM  titanic where Age is NULL;
+
+##What is the survival rate for each port of embarkation?
+##S
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM  titanic where Embarked='S';
+##Q
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM  titanic where Embarked=‘Q’;
+##C
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM  titanic where Embarked=‘C’;
+
+
+##What is the survival rate for children (under 12) in each Pclass?
+
+
+SELECT SUM(Survived * 1.0) /COUNT(*) FROM  titanic where Pclass=1 and Age<12;
+SELECT SUM(Survived * 1.0) /COUNT(*) FROM  titanic where Pclass=2 and Age<12;
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM  titanic where Pclass=3 and Age<12;
+
+
+##Did the captain of the ship survive? Is he on the list?
+SELECT * FROM titanic where Name like '%cap%';
+
+
+##Of all the people that died, who had the most expensive ticket? How much did it cost?
+SELECT MAX(CAST(Fare AS UNSIGNED)) FROM titanic where Survived=0;
+
+SELECT * FROM titanic where Survived=0
+ORDER BY CAST(Fare AS UNSIGNED) DESC;
+
+##Does having family on the boat help or hurt your chances of survival?
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM  titanic where FamilyCount=0;
+SELECT SUM(Survived * 1.0) / COUNT(*) FROM  titanic where FamilyCount!=0;
+
+
+
+
+
+
+
+
+

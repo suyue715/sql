@@ -1,0 +1,119 @@
+What information is contained in the following tables? What is the primary key for each table? Which tables can they join to? Hint: navigating a new SQL database involves both relying on documentation (such as the Northwind schema information above) and also using your intuition and exploration.
+
+categories: CategoryID
+
+customers: CustomerID
+
+employees: EmployeeID
+
+products: ProductID
+
+orders: OrderID
+
+
+
+What categories of products are sold in this database?
+
+SELECT CATEGORYNAME FROM  categories;
+
+How many products per category does the catalog contain?
+
+SELECT categoryid,count(categoryid) FROM  products
+group by categoryid;
+
+
+Let's focus only on products that have not been discontinued => how many products per category?
+
+SELECT categoryid,count(categoryid) FROM  products
+group by categoryid
+having discontinued=0;
+
+What are the most expensive five products (not discontinued)?
+
+SELECT productname,unitprice FROM  products
+where discontinued=0
+order by unitprice DESC
+limit 5;
+
+How many units of each of these five products are there in stock?
+
+SELECT productname,unitprice, unitsinstock FROM  products
+where discontinued=0
+order by unitprice DESC
+limit 5;
+
+
+How many orders are there in total?
+
+SELECT count(*) FROM  orders;
+
+Which country is receiving the most orders?
+
+Germany and USA
+
+SELECT shipcountry, count(orderid) FROM  orders
+group by shipcountry
+order by count(orderid) desc;
+
+Which country is receiving the least?
+
+Norway
+
+SELECT shipcountry, count(orderid) FROM  orders
+group by shipcountry
+order by count(orderid);
+
+
+What customer is submitting the highest number of orders?
+
+SAVEA: Save-a-lot Markets
+
+SELECT customerid, count(orderid) FROM  orders
+group by customerid
+order by count(orderid) desc;
+
+
+
+What is the average freight weight per order, by customer?
+
+SELECT customerid, AVG(freight) FROM orders
+group by customerid,orderid;
+
+What are all unique cities that customers are located in that begin with R?
+
+
+SELECT distinct city FROM  customers where city like 'r%';
+
+How many countries are customers located in that are not the UK or the US?
+Can you use LIKE? Why or why not?
+
+SELECT distinct country FROM customers where not (country like '%UK%' or country like 'USA');
+
+How many customers are in each country (not including the UK or the US)?
+
+SELECT country,count(customerid) FROM customers
+where not (country like '%UK%' or country like ’USA')
+group by country;
+
+
+Which employees have less than 100 total orders (from the orders table)? Please include their titleofcourtesy, firstname, and lastname
+
+
+SELECT employees.titleofcourtesy,employees.firstname, employees.lastname,orders.employeeid, count(orders.orderid)
+FROM orders
+inner join employees on orders.employeeid = employees.employeeid
+group by employees.employeeid
+having count(orders.orderid)<100
+;
+
+Extra credit: Research the || operator to concatenate results and join those three fields into one.
+
+
+SELECT employees.titleofcourtesy||' '||employees.firstname||' '||employees.lastname,orders.employeeid, count(orders.orderid)
+FROM orders
+inner join employees on orders.employeeid = employees.employeeid
+group by employees.employeeid
+having count(orders.orderid)<100
+;
+
+
